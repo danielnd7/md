@@ -244,6 +244,21 @@ db.alumnos.find({"nombre": {$eq:"María"}})
 db.clientes.find({"nombre": /A./})
 db.clientes.find({"nombre": /.u./})
 ```
+| Carácter | Descripción | Ejemplo | Coincide con... |
+| :--- | :--- | :--- | :--- |
+| **`^`** | Coincide con el **inicio** de la cadena. | `^App` | Cadenas que empiezan por "App". |
+| **`/i`** | (al final) -> ignora mayusculas y minusculas
+| **`$`** | Coincide con el **final** de la cadena. | `le$` | Cadenas que terminan en "le". |
+| **`.`** | Coincide con **cualquier** carácter (excepto nueva línea por defecto). | `c.t` | "cat", "cot", "cut", etc. |
+| **`*`** | Cero o más coincidencias del elemento anterior. | `ab*c` | "ac", "abc", "abbc", etc. |
+| **`+`** | Una o más coincidencias del elemento anterior. | `ab+c` | "abc", "abbc", pero no "ac". |
+| **`?`** | Cero o una coincidencia del elemento anterior. | `colou?r` | "color" y "colour". |
+| **`[abc]`** | Coincide con **cualquiera** de los caracteres entre corchetes. | `[aeiou]` | Cualquier vocal minúscula. |
+| **`[^abc]`** | Coincide con **cualquier** carácter **que no esté** entre corchetes. | `[^0-9]` | Cualquier carácter que no sea un dígito. |
+| **`\d`** | Coincide con cualquier dígito. | `\d{3}` | Tres dígitos seguidos. |
+| **`\|`** | Operador **OR** (O). | `(cat|dog)` | "cat" o "dog". |
+| **`\`** | Se utiliza para **escapar** metacaracteres. | `\.` | Un punto literal. |
+
 
 ## **Comparadores numéricos**
 ```javascript
@@ -309,9 +324,205 @@ db.clientes.find({"dirección.provincia":"Málaga"})
 
 ```javascript
 db.clientes.find({"teléfonos":["954556677","677445566"]})
+// solo el que tenga exactamente el array especificado
+
 db.clientes.find({"teléfonos":"954556677"})
+//  Devuelve los documentos que contengan en el array teléfonos el elemento especificado.
+```
+
+
+---
+
+# **Ordenación de Documentos** 
+Por defecto el orden de insercion
+
+## **`sort()`**
+**Sintaxis:** `db.coleccion.sort({campo1 : tipoOrdencion, campo2 : tipoOrdenacion, ... campoN:tipoordenacion});`  
+**Qué hace:** ordenar el resultado.  
+**Devuelve:** Devuelve los documentos ordenados  
+**Ejemplo:**  
+```javascript
+db.clientes.find({"nombre" : "Ana"}).sort({"_id" : 1, "edad" : 1})
+// clientes cuyo nombre sea “Ana” ordenado por el id de objeto y la edad (de forma ascendente)
+```
+### Tipo de ordenación:  
+> Ascendente:1 
+
+> Descendente:-1
+
+## **`count()`**
+**Sintaxis:** `db.nombreColección.count(condición, opciones)`  
+`db.clientes.countDocuments() == db.clientes.find().count()`   
+**Devuelve:** número de documentos que satisfacen una condición  
+**Ejemplo:**  
+```javascript
+db.clientes.find({"nombre" : "Eva"}).count()
+db.clientes.countDocuments({"nombre" : "Eva"})
+```
+
+## **`limit()`**
+**Qué hace:** limita el número de documentos que devuelve una consulta   
+**Ejemplo:**  
+```javascript
+db.clientes.find().limit(2)
+```
+
+## **operador `$exists`**
+**Sintaxis:** ` {campo: {$exists:<boolean>}`  
+**Devuelve:** devuelve todos los documentos que tienen (o no) un determinado campo    
+**Ejemplo:**  
+```javascript
+db.clientes.find({“primer_pedido” : {$exists:true}}) 
+db.alumnos.find({“edad” : {$exists:false}})
+```
+
+## **operador `$type `**
+**Sintaxis:** `{campo: {$type:<tipo>}`  
+**Devuelve:** los documentos cuyo campo sea de un determinado tipo   
+**Ejemplo:**  
+```javascript
+db.clientes.find({“edad”: {$type: “int”}})
+db.clientes.find({“dirección.calle”: {$type:”string”}})
 ```
 
 ---
 
+# **Índices**
+## **Creación de un índice:**
+**Sintaxis:** ` db.coleccion.createIndex(claves, opciones)`  
+//  _id  ->  único índice creado por defecto   
+**Ejemplo:** `db.clientes.createIndex({nombre:1 primer_apellido:1},{name:" nombre y apellidos"}`  
+* defaul name: `db.clientes.createIndex({"edad":1}) => name: edad_1`  
 
+## **Borrado de un índice:**
+```javascript
+db.coleccion.dropIndex(“nombreIndice”)
+db.coleccion.dropIndex(“especificación del campo”: -1)
+db.coleccion.dropIndexes() // drops all indexes
+```
+
+## **Ver los índices de una coleccion:**
+`db.clientes.getIndexes()`
+
+## **Índices simples o (de un solo campo)**
+* (se aplican a un solo campo de los documentos de una colección)  
+```javascript
+db.clientes.createIndex({"nombre" : 1}) // orden ascendente
+db.clientes.createIndex({"nombre" : -1}) // descendente
+db.clientes.createIndex({"dirección.provincia" : 1}) // documentos embebidos
+``` 
+## **Índices compuestos**
+* se aplican a varios campos de los documentos de una colección  
+
+`b.people.createIndex({ nombre: 1, edad: 1, ciudad: 1 })`  
+This index sorts and stores documents first by `nombre`, then (for documents with the same nombre) by `edad`, and finally (if both are equal) by `ciudad`.
+- "Álvaro", 35
+- "Álvaro", 18
+- "María", 30
+- "María", 21
+
+You can use a compound index **only starting from the leftmost field(s)** — meaning:
+
+| Query uses fields                               | Will use index? | Explanation                      |
+| ----------------------------------------------- | --------------- | -------------------------------- |
+| `{ nombre: "Ana" }`                             | ✅ Yes           | Uses first field                 |
+| `{ nombre: "Ana", edad: 25 }`                   | ✅ Yes           | Uses first + second field        |
+| `{ nombre: "Ana", edad: 25, ciudad: "Madrid" }` | ✅ Yes           | Uses all three fields            |
+| `{ edad: 25 }`                                  | ❌ No            | Skips the first field (`nombre`) |
+| `{ ciudad: "Madrid" }`                          | ❌ No            | Skips first and second fields    |
+| `{ edad: 25, ciudad: "Madrid" }`                | ❌ No            | Still skips `nombre`             |
+
+---
+```
+nombre ↑
+ ├── edad ↑
+ │    └── ciudad ↑
+```
+## **Índices únicos**
+`db.pacientes.createIndex({"nombre" : 1},{"unique"  : true})`  
+obligados a contener valores únicos  
+
+- Intento insertar valores repetidos -> ERROR
+
+## **Índices sparse (разреженный)**
+`db.pacientes.createIndex({"nombre" : 1},{"sparse" : true})`  
+solo incluye los documentos cuyo campo indexado existe  
+
+- por defecto se indexan con null los docs que no tengan el campo indexado
+
+## **Índices parciales (mas preferible que `sparce`)**
+Sólo indexan los documentos de una 
+colección que satisfacen una condición (expresión).  
+```javascript
+db.pacientes.createIndex({"nombre":1}, 
+{partialFilterExpression: 
+{"edad" : {$gt : 18}}
+})
+
+db.pacientes.createIndex({"nombre":1}, 
+{partialFilterExpression: 
+{"nombre" : {$exists : true}} 
+})
+```
+## **Intersección de índices**
+```javascript
+db.clientes.createIndex( { "nombre" : 1 } )
+db.clientes.createIndex( { "edad" : -1 } )
+```
+MongoDB puede combinar varios índices simples (por ejemplo, uno en `nombre` y otro en `edad`) para optimizar una misma consulta.
+
+`db.pacientes.createIndex({“direccion.ciudad":1}`  
+Podríamos crear el índice sobre el nodo principal 
+`dirección`, pero esto solo nos ayudaría en el caso 
+de que se realizaran consultas sobre el subdocumento 
+completo y con los campos exactamente en el mismo orden.
+
+## **Indexación de arrays**
+- **sólo uno de los campos del índice puede ser un array.**  
+
+` db.usuarios.createIndex({“categorias":1,“etiquetas":1})`  
+```java
+db.usuarios.insert({ "categorias": ["juegos","libros","películas"],  
+"tags": ["horror","scifi","historia"])
+// => ERROR Cannot index parallel arrays [categories] [tags]
+```
+-  **si realizamos consultas posicionales 
+sobre el array no se usará el índice**
+(elementos indexados del array no tienen 
+en cuenta el orden)
+
+### Consultas totalmente cubiertas por índices
+**Son aquellas 
+consultas cuyos campos consultados y devueltos están incluidas 
+en el índice. (las mas eficientes)**   
+`db.clientes.createIndex({“nombre":1,“edad":1})`   
+Devoulviendo `nombre` o `edad`
+
+## **`explain()`**
+informacion sobre el plan de ejecucion:  
+` db.colección.find().explain() o db.colección.explain().find()`  
+
+## **`hint()`**
+permite indicar en una consulta qué índice 
+utilizar:  
+```javascript
+db.clientes.find().hint( { edad: 1 } )– O bien 
+db.clientes.find().hint( “edad_1”)
+```
+Para obligar no usar ningún índice: `{ $natural : 1 }` natural order (or `-1` for reverced order)   
+```javascript
+db.clientes.find().hint( { $natural : 1 } )
+```
+---
+---
+---
+
+## Recomendación inserción masiva en una colección:
+1. Borrar los índices con db.colección.dropIndexes()
+2. Inserción de documentos
+3. Re-Creación de índices db.colección.createIndex()
+
+## **`reIndex()`**
+**Borra todos los índices de una colección y los 
+recrea.**  
+` db.clientes.reIndex() `
