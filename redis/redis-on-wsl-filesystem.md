@@ -1,4 +1,4 @@
-When you install **Redis** with `sudo apt install redis-server` inside WSL (Ubuntu/Debian), several files and directories are placed in your Linux filesystem. Here’s the breakdown:
+We are going to install **Redis** with `sudo apt install redis-server` inside WSL (Ubuntu/Debian) then, several files and directories are placed in your Linux filesystem. Let's checkout:
 
 ---
 
