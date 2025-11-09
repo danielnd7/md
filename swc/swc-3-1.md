@@ -129,7 +129,17 @@ any side effects (system changes) made by a routine must be undone
 
 **`a move to the design safe state is not a dangerous failure`**  
 ## Recovery
+-  to attempt to recover, for example, by using recovery blocks
+- to move directly to the design safe state  
+The intent is to try to `preserve as much of the state of the system as possible`, to 
+`restrict the corruption` that could be caused by invalid 
+information being transferred to another part of the system, and then to 
+`restart and resynchronize the affected subsystems` with as little system 
+level disruption as possible  
 
+### Crash only model
+**The crash-only model is self-explanatory:   on detecting an unanticipated condition, the system crashes and stops any form of further processing**  
+`"Something is wrong, I'm stopping right now!"`
 
 
 
