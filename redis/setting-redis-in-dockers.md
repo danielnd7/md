@@ -4,7 +4,7 @@ Voy a guiarte paso a paso para usar Redis con Docker y crear un ejemplo práctic
 
 
 
-Paso 1: Instalar Docker
+# Paso 1: Instalar Docker
 
 Primero, asegúrate de tener Docker instalado en tu sistema:
 
@@ -18,7 +18,7 @@ Para Linux, usa el gestor de paquetes de tu distribución (ej. sudo apt-get inst
 
 
 
-Paso 2: Ejecutar Redis en un contenedor Docker
+# Paso 2: Ejecutar Redis en un contenedor Docker
 
 Abre tu terminal y ejecuta:
 
@@ -40,13 +40,13 @@ Lo ejecuta en segundo plano (-d)
 
 
 
-Paso 3: Conectarte al servidor Redis
+# Paso 3: Conectarte al servidor Redis
 
 Puedes interactuar con Redis de dos formas:
 
 
 
-Opción 1: CLI de Redis dentro del contenedor (el que vamos a usar)
+## Opción 1: CLI de Redis dentro del contenedor (el que vamos a usar)
 
 Desde el terminal ejecuta:
 
@@ -54,7 +54,7 @@ docker exec -it mi-redis redis-cli
 
 
 
-Opción 2: Instalar redis-cli localmente e interactuar
+## Opción 2: Instalar redis-cli localmente e interactuar
 
 Si tienes redis-cli instalado localmente (o quieres instalarlo), puedes conectarte directamente:
 
@@ -70,12 +70,12 @@ redis-cli -h localhost -p 6379
 
 
 
-Paso 4: Parar Redis
+# Paso 4: Parar Redis
 
 Desde terminal, ejecuta:
 docker stop mi-redis
 
-Paso 5 : Iniciar Redis
+# Paso 5 : Iniciar Redis
 Asegúrate que tienes abierto docker
 
 Desde terminal, ejecuta:
