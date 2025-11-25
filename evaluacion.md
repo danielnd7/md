@@ -16,12 +16,21 @@ Evaluacion continua:
 ...  
 - Practicas 40% :  
   
-Nota minima 4 para aprobar
+Nota minima 4 para aprobar  
+  
+Tanto en la segunda convocatoria como en las extraordinarias se incluirá la 
+posibilidad de examinarse del 100% de la asignatura.  Las prácticas realizadas 
+durante el curso se podrán entregar también en la segunda convocatoria, siendo 
+evaluadas de la misma forma.
+
 
 ## IR
 
 - Examen final (40%) : ....  16/01/26?  (>= 5)
 - Practicas Individuales + proyecto en grupo (obligatorio) (60%) :  
+  
+`Quienes saquen >=5, guardan la nota para la 1ª y 2ª convocatorias oficiales.`
+
 
 ## MDSW
 - Parte practica 60% :
@@ -33,7 +42,9 @@ Nota minima 4 para aprobar
     - Contendrá preguntas puramente teóricas y también preguntas aplicadas.
     - Es necesario sacar una nota >=4 para que haga media con la nota de práctica.
 
+`Quienes saquen >=5, guardan la nota para la 1ª y 2ª convocatorias oficiales.`
+
 ## AA  ???
 - obligatorio entregar todas las PRACTICAS
-1. Parcial
+1. Parcial **8.25**
 2. Parcial
